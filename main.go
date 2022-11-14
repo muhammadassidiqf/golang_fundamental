@@ -3,14 +3,25 @@ package main
 import (
 	"log"
 	"net/http"
+	"dasar/handler"
 )
 
 func main() {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", homeHandler)
-	mux.HandleFunc("/hello", helloHandler)
-	mux.HandleFunc("/mario", marioHandler)
+	aboutHandler := func (w http.ResponseWriter, r *http.Request)  {
+		w.Write([]byte("About Page"))
+	}
+
+	mux.HandleFunc("/", handler.HomeHandler)
+	mux.HandleFunc("/hello", handler.HelloHandler)
+	mux.HandleFunc("/mario", handler.MarioHandler)
+	mux.HandleFunc("/about", aboutHandler)
+	mux.HandleFunc("/profile", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Profile Page"))
+	})
+	mux.HandleFunc("/product", handler.ProductHandler)
+	
 
 	log.Println("starting web on port 8080")
 
@@ -19,18 +30,3 @@ func main() {
 	log.Fatal(err)
 }
 
-func homeHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		http.NotFound(w, r)
-		return
-	}
-	w.Write([]byte("Welcome Sidiq, lets go belajar golang"))
-}
-
-func helloHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello world, lets go belajar golang"))
-}
-
-func marioHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Mario from nintendo, lets go belajar golang"))
-}
