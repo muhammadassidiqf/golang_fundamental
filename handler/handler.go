@@ -1,8 +1,12 @@
 package handler
 
 import (
-	"fmt"
+	// "fmt"
+	"dasar/entity"
+	"html/template"
+	"log"
 	"net/http"
+	"path"
 	"strconv"
 )
 
@@ -11,7 +15,30 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	w.Write([]byte("Welcome Sidiq, lets go belajar golang"))
+	// w.Write([]byte("Welcome Sidiq, lets go belajar golang"))
+	tmp, err := template.ParseFiles(path.Join("views","index.html"), path.Join("views", "layout.html"))
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, "Error system, please wait!", http.StatusInternalServerError)
+		return
+	}
+
+	// data := map[string]interface{}{
+	// 	"title" : "Golang Web",
+	// 	"content" : "Learning golang for html",
+	// }
+	data := []entity.Product{
+		{ ID: 1, Name: "Desle", Price: 259900, Stock: 12 },
+		{ID: 2, Name: "Phoenix", Price: 229900, Stock: 5},
+		{ID: 3, Name: "Motix", Price: 239900, Stock: 2},
+	}
+	err = tmp.Execute(w, data)
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, "Error system, please wait!", http.StatusInternalServerError)
+		return
+	}
+	// w.Write([]byte("Home"))
 }
 
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
@@ -32,7 +59,27 @@ func ProductHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tmp, err := template.ParseFiles(path.Join("views", "product.html"), path.Join("views", "layout.html"))
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, "Error system, please wait!", http.StatusInternalServerError)
+		return
+	}
+
+	data := map[string]interface{}{
+		"content" : idNum,
+		"title" : "Product Web",
+	}
+
+	// data := entity.Product{ID: 1, Name: "Desle", Price: 229900, Stock: 12}
+	err = tmp.Execute(w, data)
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, "Error system, please wait!", http.StatusInternalServerError)
+		return
+	}
+
 	// w.Write([]byte("Product Page"))
 
-	fmt.Fprintf(w, "Product Page : %d", idNum)
+	// fmt.Fprintf(w, "Product Page : %d", idNum)
 }

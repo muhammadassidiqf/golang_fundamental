@@ -22,6 +22,8 @@ func main() {
 	})
 	mux.HandleFunc("/product", handler.ProductHandler)
 	
+	fileserver := http.FileServer(http.Dir("assets"))
+	mux.Handle("/static/", http.StripPrefix("/static",fileserver))
 
 	log.Println("starting web on port 8080")
 
